@@ -314,7 +314,7 @@ function forgit::fixup -d "git fixup"
         $FORGIT_FIXUP_FZF_OPTS
     "
 
-    set target_commit (eval "$cmd" | FZF_DEFAULT_OPTS="$opts" fzf --preview="$preview" | grep -Eo '[a-f0-9]+' | head -1)
+    set target_commit (eval "$cmd" | env FZF_DEFAULT_OPTS="$opts" fzf --preview="$preview" | grep -Eo '[a-f0-9]+' | head -1)
 
     if test -n "$target_commit" && git commit --fixup "$target_commit"
         # "$target_commit~" is invalid when the commit is the first commit, but we can use "--root" instead
@@ -323,7 +323,7 @@ function forgit::fixup -d "git fixup"
             set prev_commit "--root"
         end
 
-        GIT_SEQUENCE_EDITOR=: git rebase --autostash -i --autosquash "$prev_commit"
+        env GIT_SEQUENCE_EDITOR=: git rebase --autostash -i --autosquash "$prev_commit"
     end
 
 end
@@ -354,7 +354,7 @@ function forgit::rebase -d "git rebase"
         --bind=\"ctrl-y:execute-silent(echo {} |grep -Eo '[a-f0-9]+' | head -1 | tr -d '[:space:]' |$copy_cmd)\"
         $FORGIT_REBASE_FZF_OPTS
     "
-    set commit (eval "$cmd" | FZF_DEFAULT_OPTS="$opts" fzf --preview="$preview" |
+    set commit (eval "$cmd" | env FZF_DEFAULT_OPTS="$opts" fzf --preview="$preview" |
         grep -Eo '[a-f0-9]+' | head -1)
 
     if test $commit
